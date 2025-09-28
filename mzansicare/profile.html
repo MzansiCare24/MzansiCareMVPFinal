@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - MzansiCare</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <i class="fas fa-heartbeat"></i>
+        <span>MzansiCare</span>
+      </div>
+      <ul class="nav-menu" id="nav-menu">
+        <li class="nav-item"><a href="index.html#home" class="nav-link">Home</a></li>
+        <li class="nav-item"><a href="#" id="logout-btn" class="nav-link">Logout</a></li>
+      </ul>
+      <div class="hamburger" id="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </div>
+  </nav>
+
+  <section id="profile" class="dashboard" style="padding-top:90px;">
+    <a id="myprofile" style="position:relative; top:-100px;"></a>
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+        <h2 class="section-title" style="margin:0;">My Profile</h2>
+        <button id="make-admin-btn" class="btn-secondary" style="display:none;">
+          <i class="fas fa-user-shield"></i> Make me Admin (dev)
+        </button>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="dashboard-card profile-card">
+          <div class="card-header">
+            <h3>My Health Profile <span id="role-badge" class="role-badge role-patient" style="display:none;">Patient</span></h3>
+            <button class="btn-icon" id="edit-profile-btn"><i class="fas fa-edit"></i></button>
+          </div>
+          <div class="card-content">
+            <div class="profile-info">
+              <div class="profile-avatar">
+                <i class="fas fa-user"></i>
+              </div>
+              <div class="profile-details">
+                <h4 id="profile-name">Patient Name</h4>
+                <p id="profile-clinic-id">Clinic ID: --</p>
+                <p id="profile-contact">Contact: --</p>
+                <p id="profile-conditions">Conditions: --</p>
+                <p id="profile-medications">Medications: --</p>
+              </div>
+            </div>
+            <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
+              <button id="apply-admin-btn" class="btn-secondary" style="display:none;"><i class="fas fa-id-badge"></i> Apply for Admin</button>
+              <button id="toggle-role-btn" class="btn-secondary" style="display:none;"><i class="fas fa-exchange-alt"></i> Toggle Role (dev)</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-card feedback-card">
+          <div class="card-header">
+            <h3>Feedback</h3>
+          </div>
+          <div class="card-content">
+            <form id="feedback-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="feedback-rating">Rate Your Visit</label>
+                  <select id="feedback-rating" required>
+                    <option value="">Select rating</option>
+                    <option value="5">5 - Excellent</option>
+                    <option value="4">4 - Good</option>
+                    <option value="3">3 - Okay</option>
+                    <option value="2">2 - Poor</option>
+                    <option value="1">1 - Very Poor</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="feedback-category">Category</label>
+                  <select id="feedback-category" required>
+                    <option value="hygiene">Hygiene</option>
+                    <option value="quality">Quality of Care</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="feedback-comment">Comments</label>
+                <textarea id="feedback-comment" rows="3" placeholder="Tell us about your experience..."></textarea>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn-primary">Submit Feedback</button>
+              </div>
+            </form>
+            <div id="my-feedback-list" style="margin-top:12px;"></div>
+          </div>
+        </div>
+
+        <div class="dashboard-card appointments-card" id="appointments">
+          <div class="card-header">
+            <h3>My Appointments</h3>
+            <button class="btn-icon" id="new-appointment-btn"><i class="fas fa-plus"></i></button>
+          </div>
+          <div class="card-content">
+            <div id="appointments-list">
+              <p class="empty-state">No upcoming appointments</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-card reminders-card">
+          <div class="card-header">
+            <h3>Reminders</h3>
+          </div>
+          <div class="card-content">
+            <div class="reminder-item">
+              <i class="fas fa-bell"></i>
+              <div class="reminder-details">
+                <p>Next appointment reminder</p>
+                <small>24 hours before scheduled time</small>
+              </div>
+            </div>
+            <div class="reminder-item">
+              <i class="fas fa-pills"></i>
+              <div class="reminder-details">
+                <p>Medication reminder</p>
+                <small>Daily at 8:00 AM</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-card digital-id-card">
+          <div class="card-header">
+            <h3>Digital Clinic Card</h3>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <button class="btn-icon" id="test-qr-btn" title="Generate Test QR"><i class="fas fa-qrcode"></i></button>
+              <button class="btn-icon" id="download-id-btn"><i class="fas fa-download"></i></button>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="id-card">
+              <div class="id-header">
+                <i class="fas fa-heartbeat"></i>
+                <span>MzansiCare</span>
+              </div>
+              <div class="id-content">
+                <div class="id-photo">
+                  <i class="fas fa-user"></i>
+                </div>
+                <div class="id-details">
+                  <p id="id-name">Patient Name</p>
+                  <p id="id-clinic">Clinic ID: --</p>
+                  <p id="id-blood">Blood Type: --</p>
+                  <p id="id-emergency">Emergency Contact: --</p>
+                  <div id="id-qrcode" style="margin-top:10px;"></div>
+                </div>
+              </div>
+              <div class="id-footer">
+                <div class="barcode">
+                  <div class="barcode-line"></div>
+                  <div class="barcode-line"></div>
+                  <div class="barcode-line"></div>
+                  <div class="barcode-line"></div>
+                  <div class="barcode-line"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Appointment Modal (same as on index) -->
+  <div id="appointment-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2>Book New Appointment</h2>
+      <form id="appointment-form">
+        <div class="form-group">
+          <label for="appointment-clinic">Select Clinic</label>
+          <select id="appointment-clinic" required></select>
+        </div>
+        <div class="form-group">
+          <label for="appointment-date">Preferred Date</label>
+          <input type="date" id="appointment-date" required>
+        </div>
+        <div class="form-group">
+          <label for="appointment-time">Preferred Time</label>
+          <select id="appointment-time" required></select>
+          <div id="time-slots" class="slot-grid" aria-label="Available time slots"></div>
+        </div>
+        <div class="form-group">
+          <label for="appointment-reason">Reason for Visit</label>
+          <textarea id="appointment-reason" rows="3" placeholder="Briefly describe your symptoms or reason for appointment"></textarea>
+        </div>
+        <button type="submit" class="btn-primary full-width">Book Appointment</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/appointments.js"></script>
+  <script src="js/reminders.js"></script>
+  <script src="js/feedback.js"></script>
+  <script src="js/messaging.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // Generate a sample QR payload on the Digital ID for testing OCR/QR flow
+    document.addEventListener('DOMContentLoaded', function(){
+      const btn = document.getElementById('test-qr-btn');
+      if (!btn) return;
+      btn.addEventListener('click', function(){
+        try {
+          const name = document.getElementById('profile-name')?.textContent?.trim() || 'Test Patient';
+          const clinicId = (document.getElementById('profile-clinic-id')?.textContent||'').replace('Clinic ID: ','').trim() || 'TEST-12345';
+          const blood = (document.getElementById('id-blood')?.textContent||'').replace('Blood Type: ','').trim() || 'O+';
+          const payload = {
+            name,
+            clinicId,
+            bloodType: blood,
+            conditions: ['asthma'],
+            medications: ['paracetamol'],
+            emergencyContact: 'Mom +27 71 000 0000'
+          };
+          const target = document.getElementById('id-qrcode');
+          if (target) { target.innerHTML=''; new QRCode(target, { text: JSON.stringify(payload), width: 128, height: 128 }); }
+          alert('Test QR generated on your Digital ID. Open Scan Medical Card and try scanning this screen or save it as an image to test.');
+        } catch (e) { console.warn(e); }
+      });
+    });
+  </script>
+</body>
+</html>

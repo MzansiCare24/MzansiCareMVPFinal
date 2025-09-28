@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MzansiCare - Better Healthcare for South Africa</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <!-- Add these scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Moved app scripts to the bottom to ensure Firebase is initialized first -->
+
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen" style="flex-direction:column;gap:20px;">
+        <div class="logo" style="color:#fff;display:flex;align-items:center;gap:10px;">
+            <i class="fas fa-heartbeat"></i>
+            <span>Mzansi Care</span>
+        </div>
+        <!-- Uiverse.io loader by ZacharyCrespin -->
+        <div class="loader">
+            <div class="loader-square"></div>
+            <div class="loader-square"></div>
+            <div class="loader-square"></div>
+            <div class="loader-square"></div>
+            <div class="loader-square"></div>
+            <div class="loader-square"></div>
+            <div class="loader-square"></div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>MzansiCare</span>
+            </div>
+            <ul class="nav-menu" id="nav-menu">
+                <li class="nav-item"><a href="#home" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="#features" class="nav-link">Features</a></li>
+                <li class="nav-item"><a href="profile.html#myprofile" class="nav-link">Profile</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+                <li class="nav-item" id="admin-link" style="display:none;"><a href="admin.html" class="nav-link">Admin</a></li>
+                <li class="nav-item auth-link" id="auth-link"><a href="#login" class="nav-link">Login</a></li>
+                <li class="nav-item user-menu" id="user-menu" style="display: none;">
+                    <div class="user-dropdown">
+                        <span id="user-name">User</span>
+                        <i class="fas fa-chevron-down"></i>
+                        <div class="dropdown-content">
+                            <a href="profile.html#myprofile">My Profile</a>
+                            <a href="profile.html#appointments">My Appointments</a>
+                            <a href="#" id="logout-btn">Logout</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Better Healthcare for <span class="highlight">South Africa</span></h1>
+            <p class="hero-subtitle">MzansiCare is transforming healthcare access with digital solutions that reduce wait times, improve care quality, and empower patients.</p>
+            <div class="hero-buttons">
+                <button class="btn-primary" id="get-started-btn">Get Started</button>
+                <button class="btn-secondary">Learn More</button>
+            </div>
+        </div>
+        <div class="hero-image">
+            <div class="floating-elements">
+                <div class="floating-card card-1">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Appointment Booking</span>
+                </div>
+                <div class="floating-card card-2">
+                    <i class="fas fa-bell"></i>
+                    <span>Smart Reminders</span>
+                </div>
+                <div class="floating-card card-3">
+                    <i class="fas fa-id-card"></i>
+                    <span>Digital Health Profile</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="features" style="background:#fff;">
+        <div class="container">
+            <h2 class="section-title">About MzansiCare</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-hands-helping"></i></div>
+                    <h3>Our Mission</h3>
+                    <p>To make quality healthcare accessible and efficient for every person in South Africa.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-map-marked-alt"></i></div>
+                    <h3>Community Focused</h3>
+                    <p>We partner with public clinics to reduce queues and improve patient outcomes.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-lock"></i></div>
+                    <h3>Privacy First</h3>
+                    <p>Your medical data is protected using secure, modern standards.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">How MzansiCare Helps</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Reduce Wait Times</h3>
+                    <p>Virtual queue management system minimizes time spent in clinics.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <h3>Better Quality Care</h3>
+                    <p>Digital health records ensure consistent, informed treatment.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-pills"></i>
+                    </div>
+                    <h3>Supply Tracking</h3>
+                    <p>Clinics can monitor medical supplies to prevent shortages.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Hygiene Monitoring</h3>
+                    <p>Feedback system helps maintain high cleanliness standards.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Digital Clinic Cards</h3>
+                    <p>No more lost paper cards - all your info in one secure app.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3>Appointment Reminders</h3>
+                    <p>Never miss an appointment with timely notifications.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Lab + Virtual Queue -->
+    <section id="ai-lab" class="features" style="background:#f9fafb;">
+        <div class="container">
+            <h2 class="section-title">AI Lab & Virtual Queue</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-notes-medical"></i></div>
+                    <h3>AI Triage</h3>
+                    <p>Analyze symptoms with context (age, history) and suggest urgency and clinic type.</p>
+                    <button class="btn-primary" id="open-triage">Try Triage</button>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-pills"></i></div>
+                    <h3>Medication Checker</h3>
+                    <p>Check interactions and get SA-availability suggestions.</p>
+                    <button class="btn-secondary" id="open-med-ai">Check Meds</button>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-id-card"></i></div>
+                    <h3>Scan Medical Card</h3>
+                    <p>OCR to digitize clinic cards and prefill your profile.</p>
+                    <button class="btn-secondary" id="open-ocr">Scan Card</button>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-queue"></i></div>
+                    <h3>Virtual Queue</h3>
+                    <p>Join a queue remotely and get an estimated wait time.</p>
+                    <button class="btn-primary" id="open-queue">Join Queue</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Triage Modal -->
+    <div id="triage-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" data-close="#triage-modal">&times;</span>
+            <h2>AI Symptom Triage</h2>
+            <div id="triage-loading" aria-hidden="true" style="display:none; width:120px; height:120px; margin:0 auto;"></div>
+            <form id="triage-form">
+                <div class="form-group">
+                    <label for="triage-symptoms">Describe your symptoms
+                        <button type="button" id="triage-mic" aria-label="Start voice input" class="btn-icon" style="margin-left:8px;" title="Speak"><i class="fas fa-microphone"></i></button>
+                    </label>
+                    <textarea id="triage-symptoms" rows="4" placeholder="e.g., fever for 3 days, persistent cough, chest pain when breathing" aria-label="Symptoms input"></textarea>
+                </div>
+                <button type="submit" class="btn-primary full-width">Analyze</button>
+            </form>
+            <div id="triage-result" style="margin-top:1rem;" aria-live="polite" aria-atomic="true"></div>
+        </div>
+    </div>
+
+    <!-- Medication Checker Modal -->
+    <div id="med-ai-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" data-close="#med-ai-modal">&times;</span>
+            <h2>Medication Interaction Checker</h2>
+            <form id="med-ai-form">
+                <div class="form-group">
+                    <label for="current-meds">Your current medications (comma-separated)
+                        <button type="button" id="med-current-mic" class="btn-icon" style="margin-left:8px;" title="Speak"><i class="fas fa-microphone"></i></button>
+                    </label>
+                    <input id="current-meds" placeholder="e.g., Warfarin, Ibuprofen">
+                </div>
+                <div class="form-group">
+                    <label for="new-med">New medication to check
+                        <button type="button" id="med-new-mic" class="btn-icon" style="margin-left:8px;" title="Speak"><i class="fas fa-microphone"></i></button>
+                    </label>
+                    <input id="new-med" placeholder="e.g., Aspirin">
+                </div>
+                <button type="submit" class="btn-primary full-width">Check</button>
+            </form>
+            <div id="med-ai-result" style="margin-top:1rem;" aria-live="polite" aria-atomic="true"></div>
+        </div>
+    </div>
+
+    <!-- OCR Modal -->
+    <div id="ocr-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" data-close="#ocr-modal">&times;</span>
+            <h2>Scan Medical Card</h2>
+            <p style="color:#555;font-size:0.95rem;">Upload a clear photo of your clinic card. We perform OCR and will also try to read any QR code to prefill your profile.</p>
+            <input type="file" id="ocr-file" accept="image/*">
+            <div id="ocr-result" style="margin-top:1rem;" aria-live="polite" aria-atomic="true"></div>
+        </div>
+    </div>
+
+    <!-- Queue Modal -->
+    <div id="queue-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" data-close="#queue-modal">&times;</span>
+            <h2>Join Virtual Queue</h2>
+            <form id="queue-form">
+                <div class="form-group">
+                    <label for="queue-clinic">Select Clinic</label>
+                    <select id="queue-clinic" required>
+                        <option value="">Choose a clinic</option>
+                        <option value="jhb-central">Johannesburg Central Clinic</option>
+                        <option value="cpt-health">Cape Town Health Center</option>
+                        <option value="dbn-medical">Durban Medical Clinic</option>
+                        <option value="pretoria-general">Pretoria General Hospital</option>
+                        <option value="soweto-clinic">Soweto Community Clinic</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="queue-reason">Reason (optional)</label>
+                    <input id="queue-reason" placeholder="e.g., prescription pickup">
+                </div>
+                <button type="submit" class="btn-primary full-width">Get Ticket</button>
+            </form>
+            <div id="queue-status" style="margin-top:1rem; display:none;">
+                <div class="ticket-display">
+                    <div class="ticket-number" id="ticket-number">—</div>
+                    <div class="ticket-meta"><span id="ticket-position">Position: —</span> • <span id="ticket-wait">Est. wait: —</span></div>
+                </div>
+                <div id="queue-called-anim" aria-hidden="true" style="display:none; width:140px; height:140px; margin:12px auto;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Authentication Modal -->
+<div id="auth-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="auth-tabs">
+            <button class="tab-button active" data-tab="login">Login</button>
+            <button class="tab-button" data-tab="register">Register</button>
+        </div>
+        
+        <div id="login-tab" class="tab-content active">
+            <h2>Welcome Back</h2>
+            
+            <!-- Google Sign In Button -->
+            <button class="btn-google" id="google-login-btn">
+                <i class="fab fa-google"></i>
+                Sign in with Google
+            </button>
+            
+            <div class="divider">
+                <span>or</span>
+            </div>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="btn-primary full-width">Login</button>
+            </form>
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="#" class="switch-tab" data-tab="register">Sign up</a></p>
+            </div>
+        </div>
+        
+        <div id="register-tab" class="tab-content">
+            <h2>Create Account</h2>
+            
+            <!-- Google Sign Up Button -->
+            <button class="btn-google" id="google-register-btn">
+                <i class="fab fa-google"></i>
+                Sign up with Google
+            </button>
+            
+            <div class="divider">
+                <span>or</span>
+            </div>
+            
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="register-name">Full Name</label>
+                    <input type="text" id="register-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-clinic-id">Clinic ID Number</label>
+                    <input type="text" id="register-clinic-id" required>
+                </div>
+                <button type="submit" class="btn-primary full-width">Register</button>
+            </form>
+            <div class="auth-footer">
+                <p>Already have an account? <a href="#" class="switch-tab" data-tab="login">Login</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- Appointment Modal -->
+    <div id="appointment-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Book New Appointment</h2>
+            <form id="appointment-form">
+                <div class="form-group">
+                    <label for="appointment-clinic">Select Clinic</label>
+                    <select id="appointment-clinic" required>
+                        <option value="">Choose a clinic</option>
+                        <option value="clinic-1">Johannesburg Central Clinic</option>
+                        <option value="clinic-2">Cape Town Health Center</option>
+                        <option value="clinic-3">Durban Medical Clinic</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="appointment-date">Preferred Date</label>
+                    <input type="date" id="appointment-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="appointment-time">Preferred Time</label>
+                    <select id="appointment-time" required></select>
+                    <div id="time-slots" class="slot-grid" aria-label="Available time slots"></div>
+                </div>
+                <div class="form-group">
+                    <label for="appointment-reason">Reason for Visit</label>
+                    <textarea id="appointment-reason" rows="3" placeholder="Briefly describe your symptoms or reason for appointment"></textarea>
+                </div>
+                <button type="submit" class="btn-primary full-width">Book Appointment</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- AI Chatbot -->
+    <div class="chatbot-container">
+        <div class="chatbot-toggle" id="chatbot-toggle">
+            <i class="fas fa-robot"></i>
+        </div>
+        <div class="chatbot-window" id="chatbot-window">
+            <div class="chatbot-header">
+                <h3>MzansiCare Assistant</h3>
+                <button class="btn-icon" id="close-chatbot"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="message bot-message">
+                    <p>Hello! I'm your MzansiCare assistant. How can I help you today?</p>
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbot-input" placeholder="Type your message...">
+                <button id="send-message"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="logo">
+                        <i class="fas fa-heartbeat"></i>
+                        <span>MzansiCare</span>
+                    </div>
+                    <p>Transforming healthcare access in South Africa through digital innovation.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Us</h4>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> info@mzansicare.co.za</li>
+                        <li><i class="fas fa-phone"></i> +27 11 123 4567</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Johannesburg, South Africa</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 MzansiCare. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/profile.js"></script>
+    <script src="js/appointments.js"></script>
+    <script src="js/messaging.js"></script>
+    <!-- Tesseract for OCR (optional; used by DocumentAIScanner) -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+    <!-- Lottie for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+    <!-- jsQR for QR code decoding from images -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-functions.js"></script>
+    <script src="js/queue.js"></script>
+    <script src="js/ai.js"></script>
+    <script src="js/main.js"></script>
+        <style>
+        /* From Uiverse.io by ZacharyCrespin */
+        @keyframes square-animation {
+            0% { left: 0; top: 0; }
+            10.5% { left: 0; top: 0; }
+            12.5% { left: 32px; top: 0; }
+            23% { left: 32px; top: 0; }
+            25% { left: 64px; top: 0; }
+            35.5% { left: 64px; top: 0; }
+            37.5% { left: 64px; top: 32px; }
+            48% { left: 64px; top: 32px; }
+            50% { left: 32px; top: 32px; }
+            60.5% { left: 32px; top: 32px; }
+            62.5% { left: 32px; top: 64px; }
+            73% { left: 32px; top: 64px; }
+            75% { left: 0; top: 64px; }
+            85.5% { left: 0; top: 64px; }
+            87.5% { left: 0; top: 32px; }
+            98% { left: 0; top: 32px; }
+            100% { left: 0; top: 0; }
+        }
+        .loader { position: relative; width: 96px; height: 96px; transform: rotate(45deg); }
+        .loader-square { position: absolute; top: 0; left: 0; width: 28px; height: 28px; margin: 2px; border-radius: 0px; background: white; background-size: cover; background-position: center; background-attachment: fixed; animation: square-animation 10s ease-in-out infinite both; }
+        .loader-square:nth-of-type(0) { animation-delay: 0s; }
+        .loader-square:nth-of-type(1) { animation-delay: -1.4285714286s; }
+        .loader-square:nth-of-type(2) { animation-delay: -2.8571428571s; }
+        .loader-square:nth-of-type(3) { animation-delay: -4.2857142857s; }
+        .loader-square:nth-of-type(4) { animation-delay: -5.7142857143s; }
+        .loader-square:nth-of-type(5) { animation-delay: -7.1428571429s; }
+        .loader-square:nth-of-type(6) { animation-delay: -8.5714285714s; }
+        .loader-square:nth-of-type(7) { animation-delay: -10s; }
+        </style>
+</body>
+</html>
